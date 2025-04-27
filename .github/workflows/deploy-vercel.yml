@@ -14,20 +14,17 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: "20.13.1"
+          node-version: "20.x"
 
       - uses: actions/download-artifact@v4
         with:
           name: "dist"
           path: "dist"
 
-      - name: Deploy to Vercel
+      - name: Install Vercel CLI
+        run: npm i -g vercel@latest
+
+      - name: Deploy to Vercel (only dist folder)
         env:
-          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
-        run: |
-          npx vercel --prod --confirm \
-            --token $VERCEL_TOKEN \
-            --org-id $VERCEL_ORG_ID \
-            --project-id $VERCEL_PROJECT_ID
+        run: vercel deploy --prod dist --token $VERCEL_TOKEN --confirm
