@@ -1,8 +1,5 @@
 name: Install and build
-on:
-  push:
-    branches:
-      - main
+on: workflow_call
 jobs:
   install_and_build:
     runs-on: ubuntu-latest
@@ -20,6 +17,12 @@ jobs:
           path: "**/node_modules"
           key: node-modules-${{ hashFiles('package-lock.json') }}
 
-      - run: npm ci
+      - name: Install and build
+        run: |
+          npm ci 
+          npm run build
 
-      - run: npm run build
+      - uses: actions/upload-artifact@v4
+        with:
+          name: "dist"
+          path: "dist"
