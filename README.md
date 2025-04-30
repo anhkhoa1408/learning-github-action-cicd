@@ -1,12 +1,35 @@
-# React + Vite
+# 🚀 Project Name
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+> A brief and clear description of what the project does and why it exists.
 
-Currently, two official plugins are available:
+## 📚 Table of Contents
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- [Getting Started](#getting-started)
 
-## Expanding the ESLint configuration
+## 📖 About
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+Learning Github Actions CI/CD
+
+## ⚙️ Getting Started
+
+### Prerequisites
+
+- Docker installation
+
+### Installation
+
+#### Bare Installation
+
+```bash
+# Install node_modules
+npm install
+
+# Start development server at http://localhost:5173
+npm run dev
+```
+
+#### Installation using Docker Compose
+
+```bash
+docker-compose -f docker-compose.develop.yml up
+```

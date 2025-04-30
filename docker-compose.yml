@@ -1,0 +1,12 @@
+services:
+  frontend:
+    image: cicd/frontend
+    container_name: cicd-frontend
+    build:
+      context: .
+    ports:
+      - 5173:80
+    volumes:
+      - .:/app
+      - /app/node_modules
+    restart: always
