@@ -1,6 +1,6 @@
 services:
   frontend:
-    image: cicd/frontend
+    image: cicd/frontend:${COMMIT_HASH}
     container_name: cicd-frontend
     build:
       context: .
@@ -9,4 +9,4 @@ services:
     volumes:
       - .:/app
       - /app/node_modules
-    restart: always
+    restart: unless-stopped

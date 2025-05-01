@@ -3,9 +3,13 @@ on:
   push:
     branches:
       - "feat/vps-docker-deploy"
+env:
+  COMMIT_HASH: ${{ github.sha }}
+  APP_NAME: cicd-frontend
+  DOCKER_ACCESS_TOKEN: ${{ secrets.DOCKER_ACCESS_TOKEN }}
+  DOCKER_USER_NAME: ${{ secrets.DOCKER_USER_NAME }}
+  REGISTRY_NAME: docker.io
 jobs:
-  install_and_build:
-    uses: ./.github/workflows/_install-and-build.yml
   deploy:
     runs-on: ubuntu-latest
     steps:
@@ -14,3 +18,34 @@ jobs:
       - uses: "actions/setup-node@v4"
         with:
           node-version: "23.x"
+
+      - name: Build docker image
+        run: |
+          echo "${COMMIT_HASH}"
+          docker build -t ${DOCKER_USER_NAME}/${APP_NAME}:${COMMIT_HASH} .
+
+      - name: Login to Docker Hub
+        run: echo "${DOCKER_ACCESS_TOKEN}" | docker login ${REGISTRY_NAME} -u ${DOCKER_USER_NAME} --password-stdin
+
+      - name: Push image to Docker Hub
+        run: |
+          docker tag ${DOCKER_USER_NAME}/${APP_NAME}:${COMMIT_HASH} ${REGISTRY_NAME}/${DOCKER_USER_NAME}/${APP_NAME}:${COMMIT_HASH}
+          docker push ${DOCKER_USER_NAME}/${APP_NAME}:${COMMIT_HASH}
+
+      - name: Login GCP Compute Engine
+        env:
+          SSH_KEY: ${{ secrets.SSH_KEY }}
+          SSH_USER: ${{ secrets.SSH_USER }}
+          SSH_IP: ${{ secrets.SSH_IP }}
+        run: |
+          echo "${SSH_KEY}" > private_key.pem
+          chmod 400 private_key.pem
+          mkdir -p ~/.ssh
+          ssh-keyscan -H ${SSH_IP} >> ~/.ssh/known_hosts
+          ssh -i private_key.pem ${SSH_USER}@${SSH_IP} << EOF
+            echo "${DOCKER_ACCESS_TOKEN}" | docker login -u ${DOCKER_USER_NAME} --password-stdin
+            docker pull ${REGISTRY_NAME}/${DOCKER_USER_NAME}/${APP_NAME}:${COMMIT_HASH}
+            docker stop ${APP_NAME} || true
+            docker rm ${APP_NAME} || true
+            docker run -d --name ${APP_NAME} -p 5173:80 ${REGISTRY_NAME}/${DOCKER_USER_NAME}/${APP_NAME}:${COMMIT_HASH}
+          EOF
