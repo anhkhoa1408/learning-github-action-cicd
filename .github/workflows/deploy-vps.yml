@@ -31,6 +31,7 @@ jobs:
         run: |
           docker tag ${DOCKER_USER_NAME}/${APP_NAME}:${COMMIT_HASH} ${REGISTRY_NAME}/${DOCKER_USER_NAME}/${APP_NAME}:${COMMIT_HASH}
           docker push ${DOCKER_USER_NAME}/${APP_NAME}:${COMMIT_HASH}
+          docker logout
 
       - name: Login to GCP Compute Engine
         env:
