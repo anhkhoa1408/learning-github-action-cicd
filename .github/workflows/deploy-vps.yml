@@ -38,14 +38,17 @@ jobs:
           SSH_USER: ${{ secrets.SSH_USER }}
           SSH_IP: ${{ secrets.SSH_IP }}
         run: |
-          echo "${SSH_KEY}" > private_key.pem
-          chmod 400 private_key.pem
+          sudo apt-get update
+          which ssh-agent || ( sudo apt-get install -y openssh-client )
+          eval $(ssh-agent -s)
+          echo "${SSH_KEY}" | tr -d '\r' | ssh-add -
           mkdir -p ~/.ssh
           ssh-keyscan -H ${SSH_IP} >> ~/.ssh/known_hosts
-          ssh -i private_key.pem ${SSH_USER}@${SSH_IP} << EOF
+          ssh ${SSH_USER}@${SSH_IP} << EOF
             echo "${DOCKER_ACCESS_TOKEN}" | docker login -u ${DOCKER_USER_NAME} --password-stdin
             docker pull ${REGISTRY_NAME}/${DOCKER_USER_NAME}/${APP_NAME}:${COMMIT_HASH}
             docker stop ${APP_NAME} || true
             docker rm ${APP_NAME} || true
             docker run -d --name ${APP_NAME} -p 443:80 ${REGISTRY_NAME}/${DOCKER_USER_NAME}/${APP_NAME}:${COMMIT_HASH}
+            docker logout
           EOF
