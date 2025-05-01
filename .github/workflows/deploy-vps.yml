@@ -47,5 +47,5 @@ jobs:
             docker pull ${REGISTRY_NAME}/${DOCKER_USER_NAME}/${APP_NAME}:${COMMIT_HASH}
             docker stop ${APP_NAME} || true
             docker rm ${APP_NAME} || true
-            docker run -d --name ${APP_NAME} -p 5173:80 ${REGISTRY_NAME}/${DOCKER_USER_NAME}/${APP_NAME}:${COMMIT_HASH}
+            docker run -d --name ${APP_NAME} -p 443:80 ${REGISTRY_NAME}/${DOCKER_USER_NAME}/${APP_NAME}:${COMMIT_HASH}
           EOF
