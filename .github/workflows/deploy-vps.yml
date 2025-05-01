@@ -32,7 +32,7 @@ jobs:
           docker tag ${DOCKER_USER_NAME}/${APP_NAME}:${COMMIT_HASH} ${REGISTRY_NAME}/${DOCKER_USER_NAME}/${APP_NAME}:${COMMIT_HASH}
           docker push ${DOCKER_USER_NAME}/${APP_NAME}:${COMMIT_HASH}
 
-      - name: Login GCP Compute Engine
+      - name: Login to GCP Compute Engine
         env:
           SSH_KEY: ${{ secrets.SSH_KEY }}
           SSH_USER: ${{ secrets.SSH_USER }}
