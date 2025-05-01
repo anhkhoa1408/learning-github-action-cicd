@@ -5,14 +5,16 @@ on:
       - "feat/vps-docker-deploy"
 env:
   COMMIT_HASH: ${{ github.sha }}
+  BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
   DOCKER_ACCESS_TOKEN: ${{ secrets.DOCKER_ACCESS_TOKEN }}
   DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-  DOCKER_BASE_TAG: ${{ github.head_ref || github.ref_name }}
   DOCKER_IMAGE: cicd-frontend
   DOCKER_REGISTRY: docker.io
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    env:
+      DOCKER_BASE_TAG: "${GITHUB_REF_NAME//\//-}"
     steps:
       - uses: "actions/checkout@v4"
 
