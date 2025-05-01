@@ -13,14 +13,19 @@ env:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    env:
-      DOCKER_BASE_TAG: "${GITHUB_REF_NAME//\//-}"
     steps:
       - uses: "actions/checkout@v4"
 
       - uses: "actions/setup-node@v4"
         with:
           node-version: "23.x"
+
+      - name: Format BRANCH_NAME
+        run: |
+          echo "Before format: $BRANCH_NAME"
+          FORMAT="${BRANCH_NAME//\//-}"
+          echo "After sanitize: $FORMAT"
+          echo "DOCKER_BASE_TAG=$FORMAT" >> $GITHUB_ENV
 
       - name: Pull cache image
         run: docker pull ${DOCKER_REGISTRY}/${DOCKER_USERNAME}/${DOCKER_IMAGE}:${DOCKER_BASE_TAG} || true
